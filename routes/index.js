@@ -8,10 +8,21 @@ var Order = require('../models/order');
 var elasticsearch = require('elasticsearch');
 var client = require('./connection.js');
 //var client = new elasticsearch.Client();
-console.log("1");
+
+/*/var redis = require('redis');
+//var client = redis.createClient(12067, 'redis-12067.c9.us-east-1-4.ec2.cloud.redislabs.com', {no_ready_check: true});
+client.auth('password', function (err) {
+    if (err) throw err;
+});
+
+client.on('connect', function() {console.log('Connected to Redis');
+});*/
 
 /* GET home page. */
+
+
 router.get('/', function (req, res, next) {
+
     var successMsg = req.flash('success')[0];
     Product.find(function (err, docs) {
         var productChunks = [];
@@ -19,9 +30,8 @@ router.get('/', function (req, res, next) {
         for (var i = 0; i < docs.length; i += chunkSize) {
             productChunks.push(docs.slice(i, i + chunkSize));
         }
-        res.render('shop/index', {title: 'Shopping Cart', products: productChunks, successMsg: successMsg, noMessages: !successMsg});
+        res.render('shop/index', {title: 'Book e-commerce', products: productChunks, successMsg: successMsg, noMessages: !successMsg});
     });
-
 });
 //Using Amazon Elastic Search and display results
 router.get('/search',function(req,response,next)
@@ -36,7 +46,7 @@ router.get('/search',function(req,response,next)
         body: {
             query: {
                multi_match: {
-                    fields: ["description", "title"],
+                    fields: ["title","authors"],
                     query: userQuery,
                     fuzziness: "AUTO"
                }
@@ -47,15 +57,6 @@ router.get('/search',function(req,response,next)
            // console.log("search error: " + error);
             throw error;
         }
-        /*else {
-            console.log("--- Response ---");
-            console.log(res);
-            console.log("--- Hits ---");
-            res.hits.hits.forEach(function (hit) {
-                console.log(hit);
-                console.log("results went to hit");
-            })}
-            //console.log(res);*/
             var results = res.hits.hits.map(function (i) {
                 return i['_source'];
             });
@@ -66,24 +67,24 @@ router.get('/search',function(req,response,next)
                 console.log(productChunks);
                 console.log("reached here");
             }
-            response.render('shop/index', {
-                title: 'Books found for you', products: productChunks
+            response.render('shop/search', {
+                title: 'Book e-commerce', products: productChunks
             });
         });
 });
 
 
-router.get('/shoppingcart', function(req, res, next) {
+/*router.get('/shoppingcart', function(req, res, next) {
         res.render('shop/shoppingcart');
-    });
+    });*/
 
 router.get('/contactus', function(req, res, next) {
-    res.render('layouts/contactus');
+    res.render('layouts/contactus',{title: 'Book Ecommerce'});
 });
 router.get('/aboutus', function(req, res, next) {
     //var productId = req.params.id;
    // var cart = new Cart(req.session.cart ? req.session.cart : {});
-        res.render('layouts/aboutus');
+        res.render('layouts/aboutus',{title: 'Book Ecommerce'});
     });
 
 
@@ -94,7 +95,7 @@ router.get('/loadProduct', function (req, res) {
     Product.find({_id: productId}, function(err, product) {
         console.log("Connect to MongoDB");
         console.log("productName from MongoDb"+product);
-        res.render('shop/product', {title: 'Shopping Cart', products: product});
+        res.render('shop/product', {title: 'Book Ecommerce', products: product});
     });
 });
 
@@ -102,10 +103,10 @@ router.get('/loadProduct', function (req, res) {
 module.exports = router;
 //module.exports= client;
 
-function isLoggedIn(req, res, next) {
+/*function isLoggedIn(req, res, next) {
     if (req.isAuthenticated()) {
         return next();
     }
     req.session.oldUrl = req.url;
     res.redirect('/user/signin');
-}
+}*/

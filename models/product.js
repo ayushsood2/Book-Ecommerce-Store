@@ -11,7 +11,8 @@ var schema = new Schema({
     _id: {type: Number, required: true},
     isbn: {type:String, required: true},
     status: {type:String, required: true},
-    categories: {type:String, required: true}
+    categories: {type:String, required: true},
+    publishedDate: {type:String, required: true}
     });
 
 module.exports = mongoose.model('Product', schema);

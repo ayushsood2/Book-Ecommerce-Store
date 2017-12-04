@@ -8,4 +8,4 @@ var client = new elasticsearch.Client({
     region: 'us-west-2',
     host: 'search-bookecommerce-hwglvcrguky6kzxyvfhfjw7rea.us-east-2.es.amazonaws.com'
 });
-module.exports = client; 
+module.exports = client;
